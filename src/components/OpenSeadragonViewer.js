@@ -124,17 +124,19 @@ export class OpenSeadragonViewer extends Component {
     } else if (viewerConfig && !this.osdUpdating) {
       const { viewport } = viewer;
 
+      const immediately = viewerConfig.immediately || false;
+
       if (viewerConfig.x !== viewport.centerSpringX.target.value
         || viewerConfig.y !== viewport.centerSpringY.target.value) {
-        viewport.panTo(viewerConfig, false);
+        viewport.panTo(viewerConfig, immediately);
       }
 
       if (viewerConfig.zoom !== viewport.zoomSpring.target.value) {
-        viewport.zoomTo(viewerConfig.zoom, viewerConfig, false);
+        viewport.zoomTo(viewerConfig.zoom, viewerConfig, immediately);
       }
 
       if (viewerConfig.rotation !== viewport.getRotation()) {
-        viewport.setRotation(viewerConfig.rotation);
+        viewport.setRotation(viewerConfig.rotation, immediately);
       }
 
       if (viewerConfig.flip !== viewport.getFlip()) {
@@ -369,9 +371,9 @@ export class OpenSeadragonViewer extends Component {
         aria-label={t('item', { label })}
         aria-live="polite"
       >
-        { drawAnnotations
-            && <AnnotationsOverlay viewer={viewer} windowId={windowId} /> }
-        { enhancedChildren }
+        {drawAnnotations
+          && <AnnotationsOverlay viewer={viewer} windowId={windowId} />}
+        {enhancedChildren}
         <PluginHook viewer={viewer} {...{ ...this.props, children: null }} />
       </StyledSection>
     );
