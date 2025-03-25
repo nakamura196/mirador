@@ -43,16 +43,18 @@ function OpenSeadragonComponent({
     if (initialViewportSet.current) return;
     initialViewportSet.current = true;
 
+    const immediately = true;
+
     if (viewerConfig.x != null && viewerConfig.y != null) {
-      viewport.panTo(new Openseadragon.Point(viewerConfig.x, viewerConfig.y), true);
+      viewport.panTo(new Openseadragon.Point(viewerConfig.x, viewerConfig.y), immediately);
     }
 
     if (viewerConfig.zoom != null) {
-      viewport.zoomTo(viewerConfig.zoom, new Openseadragon.Point(viewerConfig.x, viewerConfig.y), true);
+      viewport.zoomTo(viewerConfig.zoom, new Openseadragon.Point(viewerConfig.x, viewerConfig.y), immediately);
     }
 
     if (viewerConfig.rotation != null && viewerConfig.rotation !== viewport.getRotation()) {
-      viewport.setRotation(viewerConfig.rotation);
+      viewport.setRotation(viewerConfig.rotation, immediately);
     }
 
     if (viewerConfig.flip != null && (viewerConfig.flip || false) !== viewport.getFlip()) {
@@ -61,9 +63,9 @@ function OpenSeadragonComponent({
 
     if (!viewerConfig.x && !viewerConfig.y && !viewerConfig.zoom) {
       if (viewerConfig.bounds) {
-        viewport.fitBounds(new Openseadragon.Rect(...viewerConfig.bounds), true);
+        viewport.fitBounds(new Openseadragon.Rect(...viewerConfig.bounds), immediately);
       } else {
-        viewport.goHome(true);
+        viewport.goHome(immediately);
       }
     }
   }, [initialViewportSet, viewerConfig]);
@@ -79,21 +81,23 @@ function OpenSeadragonComponent({
       return;
     }
 
+    const immediately = viewerConfig.immediately || false;
+
     // @ts-expect-error
     if (viewerConfig.x != null && viewerConfig.y != null
       && (Math.round(viewerConfig.x) !== Math.round(viewport.centerSpringX.target.value)
       // @ts-expect-error
       || Math.round(viewerConfig.y) !== Math.round(viewport.centerSpringY.target.value))) {
-      viewport.panTo(new Openseadragon.Point(viewerConfig.x, viewerConfig.y), false);
+      viewport.panTo(new Openseadragon.Point(viewerConfig.x, viewerConfig.y), immediately);
     }
 
     // @ts-expect-error
     if (viewerConfig.zoom != null && viewerConfig.zoom !== viewport.zoomSpring.target.value) {
-      viewport.zoomTo(viewerConfig.zoom, new Openseadragon.Point(viewerConfig.x, viewerConfig.y), false);
+      viewport.zoomTo(viewerConfig.zoom, new Openseadragon.Point(viewerConfig.x, viewerConfig.y), immediately);
     }
 
     if (viewerConfig.rotation != null && viewerConfig.rotation !== viewport.getRotation()) {
-      viewport.setRotation(viewerConfig.rotation);
+      viewport.setRotation(viewerConfig.rotation, immediately);
     }
 
     if (viewerConfig.flip != null && (viewerConfig.flip || false) !== viewport.getFlip()) {
@@ -103,7 +107,7 @@ function OpenSeadragonComponent({
     if (viewerConfig.bounds && !viewerConfig.x && !viewerConfig.y && !viewerConfig.zoom) {
       const rect = new Openseadragon.Rect(...viewerConfig.bounds);
       if (rect.equals(viewport.getBounds())) {
-        viewport.fitBounds(rect, false);
+        viewport.fitBounds(rect, immediately);
       }
     }
   }, [initialViewportSet, setInitialBounds, viewerConfig, viewerRef]);
